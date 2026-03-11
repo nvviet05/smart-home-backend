@@ -33,7 +33,7 @@ smart-home-backend/
 │  └─ app.js         # Entry point
 ├─ .env.example
 ├─ .gitignore
-├─ package.json
+├─ package.jsongit push --set-upstream origin develop
 └─ README.md
 ```
 
