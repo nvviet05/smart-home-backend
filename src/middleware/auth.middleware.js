@@ -5,7 +5,7 @@ const auth = async (req, res, next) => {
     try {
         const header = req.headers.authorization;
         if (!header || !header.startsWith('Bearer ')) {
-            return res.status(401).json({ message: 'Chưa đăng nhập' });
+            return res.status(401).json({ message: 'Not authenticated' });
         }
 
         const token = header.split(' ')[1];
@@ -13,13 +13,13 @@ const auth = async (req, res, next) => {
 
         const user = await User.findById(decoded.id);
         if (!user) {
-            return res.status(401).json({ message: 'Người dùng không tồn tại' });
+            return res.status(401).json({ message: 'User not found' });
         }
 
         req.user = user;
         next();
     } catch (err) {
-        return res.status(401).json({ message: 'Token không hợp lệ' });
+        return res.status(401).json({ message: 'Invalid token' });
     }
 };
 

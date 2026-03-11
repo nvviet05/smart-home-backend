@@ -10,7 +10,7 @@ const generateToken = (userId) => {
 const register = async ({ name, email, password }) => {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-        const error = new Error('Email đã được sử dụng');
+        const error = new Error('Email is already in use');
         error.statusCode = 409;
         throw error;
     }
@@ -27,7 +27,7 @@ const register = async ({ name, email, password }) => {
 const login = async ({ email, password }) => {
     const user = await User.findOne({ email }).select('+password');
     if (!user || !(await user.comparePassword(password))) {
-        const error = new Error('Email hoặc mật khẩu không đúng');
+        const error = new Error('Invalid email or password');
         error.statusCode = 401;
         throw error;
     }
@@ -43,7 +43,7 @@ const login = async ({ email, password }) => {
 const getMe = async (userId) => {
     const user = await User.findById(userId);
     if (!user) {
-        const error = new Error('Người dùng không tồn tại');
+        const error = new Error('User not found');
         error.statusCode = 404;
         throw error;
     }

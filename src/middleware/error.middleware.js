@@ -10,16 +10,16 @@ const errorHandler = (err, _req, res, _next) => {
 
     // Mongoose duplicate key
     if (err.code === 11000) {
-        return res.status(409).json({ message: 'Dữ liệu đã tồn tại (trùng lặp)' });
+        return res.status(409).json({ message: 'Duplicate entry' });
     }
 
     // Mongoose bad ObjectId
     if (err.name === 'CastError') {
-        return res.status(400).json({ message: 'ID không hợp lệ' });
+        return res.status(400).json({ message: 'Invalid ID' });
     }
 
     const status = err.statusCode || 500;
-    res.status(status).json({ message: err.message || 'Lỗi server' });
+    res.status(status).json({ message: err.message || 'Internal server error' });
 };
 
 module.exports = { errorHandler };

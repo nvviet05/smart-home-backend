@@ -4,54 +4,36 @@ const getAll = async (userId) => {
     return Device.find({ user: userId }).sort({ createdAt: -1 });
 };
 
-const getById = async (id, userId) => {
-    const device = await Device.findOne({ _id: id, user: userId });
+// Frontend sends a control command (e.g. turn fan on)
+const control = async (deviceId, action, userId) => {
+    const device = await Device.findOne({ _id: deviceId, user: userId });
     if (!device) {
-        const error = new Error('Không tìm thấy thiết bị');
+        const error = new Error('Device not found');
         error.statusCode = 404;
         throw error;
     }
-    return device;
-};
-
-const create = async (data, userId) => {
-    return Device.create({ ...data, user: userId });
-};
-
-const update = async (id, data, userId) => {
-    const device = await Device.findOneAndUpdate(
-        { _id: id, user: userId },
-        data,
-        { new: true, runValidators: true }
-    );
-    if (!device) {
-        const error = new Error('Không tìm thấy thiết bị');
-        error.statusCode = 404;
-        throw error;
-    }
-    return device;
-};
-
-const toggle = async (id, userId) => {
-    const device = await Device.findOne({ _id: id, user: userId });
-    if (!device) {
-        const error = new Error('Không tìm thấy thiết bị');
-        error.statusCode = 404;
-        throw error;
-    }
-    device.status = device.status === 'on' ? 'off' : 'on';
+    device.status = action; // 'on' or 'off'
     await device.save();
     return device;
 };
 
-const remove = async (id, userId) => {
-    const device = await Device.findOneAndDelete({ _id: id, user: userId });
+// ESP32 reports the actual device status
+const reportStatus = async (deviceId, status, userId) => {
+    const device = await Device.findOne({ _id: deviceId, user: userId });
     if (!device) {
-        const error = new Error('Không tìm thấy thiết bị');
+        const error = new Error('Device not found');
         error.statusCode = 404;
         throw error;
     }
+    device.status = status;
+    await device.save();
     return device;
 };
 
-module.exports = { getAll, getById, create, update, toggle, remove };
+// ESP32 polls for pending commands
+const getCommand = async (userId) => {
+    const devices = await Device.find({ user: userId }).select('type status');
+    return devices;
+};
+
+module.exports = { getAll, control, reportStatus, getCommand };

@@ -24,7 +24,7 @@ app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok' });
 });
 
-// ── Error handler (phải đặt cuối cùng) ────────────────
+// ── Error handler ──────────────────────────────────────
 app.use(errorHandler);
 
 // ── Database & Start server ────────────────────────────

@@ -9,49 +9,33 @@ const getAll = async (req, res, next) => {
     }
 };
 
-const getById = async (req, res, next) => {
+const control = async (req, res, next) => {
     try {
-        const device = await deviceService.getById(req.params.id, req.user._id);
+        const { deviceId, action } = req.body;
+        const device = await deviceService.control(deviceId, action, req.user._id);
         res.json(device);
     } catch (err) {
         next(err);
     }
 };
 
-const create = async (req, res, next) => {
+const reportStatus = async (req, res, next) => {
     try {
-        const device = await deviceService.create(req.body, req.user._id);
-        res.status(201).json(device);
-    } catch (err) {
-        next(err);
-    }
-};
-
-const update = async (req, res, next) => {
-    try {
-        const device = await deviceService.update(req.params.id, req.body, req.user._id);
+        const { deviceId, status } = req.body;
+        const device = await deviceService.reportStatus(deviceId, status, req.user._id);
         res.json(device);
     } catch (err) {
         next(err);
     }
 };
 
-const toggle = async (req, res, next) => {
+const getCommand = async (req, res, next) => {
     try {
-        const device = await deviceService.toggle(req.params.id, req.user._id);
-        res.json(device);
+        const commands = await deviceService.getCommand(req.user._id);
+        res.json(commands);
     } catch (err) {
         next(err);
     }
 };
 
-const remove = async (req, res, next) => {
-    try {
-        await deviceService.remove(req.params.id, req.user._id);
-        res.json({ message: 'Đã xoá thiết bị' });
-    } catch (err) {
-        next(err);
-    }
-};
-
-module.exports = { getAll, getById, create, update, toggle, remove };
+module.exports = { getAll, control, reportStatus, getCommand };

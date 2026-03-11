@@ -8,9 +8,6 @@ const sensorDataSchema = new mongoose.Schema(
         humidity: {
             type: Number,
         },
-        light: {
-            type: Number,
-        },
         user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',

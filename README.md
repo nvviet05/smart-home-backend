@@ -1,13 +1,15 @@
 # Smart Home Backend
 
-Backend API for the **Smart Home** system – IoT device management, sensor data, and user authentication.
+Backend API for the **Smart Home** system – temperature/humidity monitoring, fan/light control, user authentication, and basic automation.
 
 ## Goals
 
-- Provide a REST API for the Smart Home Frontend application
+- Provide a REST API for the Smart Home Frontend and ESP32 firmware
 - User authentication with JWT
-- CRUD operations for devices (lights, fans, air conditioners, doors, etc.)
-- Collect & query sensor data (temperature, humidity, light)
+- Control devices: fan and light (on/off)
+- Collect & query sensor data (temperature, humidity)
+- Sensor history & alert thresholds
+- 1 basic automation rule (e.g. turn on fan when temperature > threshold)
 
 ## Tech Stack
 
@@ -82,12 +84,10 @@ npm start
 
 | Method | Endpoint | Description | Auth |
 |---|---|---|---|
-| GET | `/api/devices` | List all devices | Bearer Token |
-| GET | `/api/devices/:id` | Get device details | Bearer Token |
-| POST | `/api/devices` | Add a new device | Bearer Token |
-| PUT | `/api/devices/:id` | Update a device | Bearer Token |
-| PATCH | `/api/devices/:id/toggle` | Toggle device on/off | Bearer Token |
-| DELETE | `/api/devices/:id` | Delete a device | Bearer Token |
+| GET | `/api/devices` | List all devices (fan, light) | Bearer Token |
+| POST | `/api/devices/control` | Send control command (turn on/off) | Bearer Token |
+| POST | `/api/devices/status` | ESP32 reports current device status | Bearer Token |
+| GET | `/api/devices/command` | ESP32 polls for pending commands | Bearer Token |
 
 ### Sensors
 
@@ -95,7 +95,7 @@ npm start
 |---|---|---|---|
 | GET | `/api/sensors/latest` | Get latest sensor data | Bearer Token |
 | GET | `/api/sensors/history?from=&to=&limit=` | Sensor data history | Bearer Token |
-| POST | `/api/sensors` | Record new sensor data | Bearer Token |
+| POST | `/api/sensors/data` | ESP32 posts new sensor reading | Bearer Token |
 
 ### Health Check
 
@@ -124,5 +124,5 @@ fix/*         ← bug fix branches (fix/login-bug)
 - Uses **Mongoose** as the ODM
 - 3 main collections:
   - `users` – User information
-  - `devices` – IoT devices
-  - `sensordatas` – Time-series sensor data
+  - `devices` – IoT devices (fan, light)
+  - `sensordatas` – Time-series sensor data (temperature, humidity)
