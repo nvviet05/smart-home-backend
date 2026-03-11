@@ -1,31 +1,31 @@
 # Smart Home Backend
 
-Backend API cho hệ thống **Smart Home** – quản lý thiết bị IoT, dữ liệu cảm biến, xác thực người dùng.
+Backend API for the **Smart Home** system – IoT device management, sensor data, and user authentication.
 
-## Mục tiêu
+## Goals
 
-- Cung cấp REST API cho ứng dụng Smart Home Frontend
-- Xác thực người dùng bằng JWT
-- CRUD thiết bị (đèn, quạt, điều hoà, cửa…)
-- Thu thập & truy vấn dữ liệu cảm biến (nhiệt độ, độ ẩm, ánh sáng)
+- Provide a REST API for the Smart Home Frontend application
+- User authentication with JWT
+- CRUD operations for devices (lights, fans, air conditioners, doors, etc.)
+- Collect & query sensor data (temperature, humidity, light)
 
-## Công nghệ
+## Tech Stack
 
-| Thành phần | Công nghệ |
+| Component | Technology |
 |---|---|
 | Runtime | Node.js |
 | Framework | Express |
 | Database | MongoDB (Mongoose ODM) |
 | Auth | JWT + bcrypt |
 
-## Cấu trúc thư mục
+## Project Structure
 
 ```
 smart-home-backend/
 ├─ src/
-│  ├─ controllers/    # Xử lý request/response
-│  ├─ routes/         # Định nghĩa endpoint
-│  ├─ models/         # Mongoose schema
+│  ├─ controllers/    # Handle request/response
+│  ├─ routes/         # Define endpoints
+│  ├─ models/         # Mongoose schemas
 │  ├─ middleware/     # Auth, error handler
 │  ├─ services/      # Business logic
 │  └─ app.js         # Entry point
@@ -35,94 +35,94 @@ smart-home-backend/
 └─ README.md
 ```
 
-## Cách chạy local
+## Getting Started
 
 ```bash
-# 1. Clone repo
+# 1. Clone the repo
 git clone https://github.com/<your-username>/smart-home-backend.git
 cd smart-home-backend
 
-# 2. Cài dependencies
+# 2. Install dependencies
 npm install
 
-# 3. Tạo file .env từ .env.example
+# 3. Create .env file from .env.example
 cp .env.example .env
-# Sau đó sửa các giá trị trong .env cho phù hợp
+# Then update the values in .env as needed
 
-# 4. Chạy development server
+# 4. Run the development server
 npm run dev
 
-# Hoặc chạy production
+# Or run in production
 npm start
 ```
 
-## Biến môi trường (.env)
+## Environment Variables (.env)
 
-| Biến | Mô tả | Ví dụ |
+| Variable | Description | Example |
 |---|---|---|
-| `PORT` | Port server | `5000` |
-| `NODE_ENV` | Môi trường | `development` |
-| `MONGODB_URI` | Connection string MongoDB | `mongodb://localhost:27017/smarthome` |
-| `JWT_SECRET` | Secret key cho JWT | `my-super-secret-key` |
-| `JWT_EXPIRES_IN` | Thời gian hết hạn token | `7d` |
+| `PORT` | Server port | `5000` |
+| `NODE_ENV` | Environment | `development` |
+| `MONGODB_URI` | MongoDB connection string | `mongodb://localhost:27017/smarthome` |
+| `JWT_SECRET` | Secret key for JWT | `my-super-secret-key` |
+| `JWT_EXPIRES_IN` | Token expiration time | `7d` |
 
-> **Lưu ý:** Không push file `.env` thật lên GitHub. Chỉ commit `.env.example`.
+> **Note:** Do not push the actual `.env` file to GitHub. Only commit `.env.example`.
 
-## API chính
+## API Endpoints
 
 ### Auth
 
-| Method | Endpoint | Mô tả | Auth |
+| Method | Endpoint | Description | Auth |
 |---|---|---|---|
-| POST | `/api/auth/register` | Đăng ký tài khoản | Không |
-| POST | `/api/auth/login` | Đăng nhập, nhận JWT | Không |
-| GET | `/api/auth/me` | Lấy thông tin user hiện tại | Bearer Token |
+| POST | `/api/auth/register` | Register a new account | No |
+| POST | `/api/auth/login` | Log in and receive JWT | No |
+| GET | `/api/auth/me` | Get current user info | Bearer Token |
 
 ### Devices
 
-| Method | Endpoint | Mô tả | Auth |
+| Method | Endpoint | Description | Auth |
 |---|---|---|---|
-| GET | `/api/devices` | Danh sách thiết bị | Bearer Token |
-| GET | `/api/devices/:id` | Chi tiết 1 thiết bị | Bearer Token |
-| POST | `/api/devices` | Thêm thiết bị mới | Bearer Token |
-| PUT | `/api/devices/:id` | Cập nhật thiết bị | Bearer Token |
-| PATCH | `/api/devices/:id/toggle` | Bật/tắt thiết bị | Bearer Token |
-| DELETE | `/api/devices/:id` | Xoá thiết bị | Bearer Token |
+| GET | `/api/devices` | List all devices | Bearer Token |
+| GET | `/api/devices/:id` | Get device details | Bearer Token |
+| POST | `/api/devices` | Add a new device | Bearer Token |
+| PUT | `/api/devices/:id` | Update a device | Bearer Token |
+| PATCH | `/api/devices/:id/toggle` | Toggle device on/off | Bearer Token |
+| DELETE | `/api/devices/:id` | Delete a device | Bearer Token |
 
 ### Sensors
 
-| Method | Endpoint | Mô tả | Auth |
+| Method | Endpoint | Description | Auth |
 |---|---|---|---|
-| GET | `/api/sensors/latest` | Dữ liệu cảm biến mới nhất | Bearer Token |
-| GET | `/api/sensors/history?from=&to=&limit=` | Lịch sử cảm biến | Bearer Token |
-| POST | `/api/sensors` | Ghi dữ liệu cảm biến mới | Bearer Token |
+| GET | `/api/sensors/latest` | Get latest sensor data | Bearer Token |
+| GET | `/api/sensors/history?from=&to=&limit=` | Sensor data history | Bearer Token |
+| POST | `/api/sensors` | Record new sensor data | Bearer Token |
 
 ### Health Check
 
-| Method | Endpoint | Mô tả |
+| Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/health` | Kiểm tra server hoạt động |
+| GET | `/api/health` | Check if the server is running |
 
-## Branch strategy
+## Branch Strategy
 
 ```
-main          ← branch ổn định, chỉ merge khi đã test kỹ
-develop       ← branch tích hợp, merge feature vào đây
-feature/*     ← branch theo tính năng (feature/auth-api, feature/sensor-dashboard)
-fix/*         ← branch sửa lỗi (fix/login-bug)
+main          ← stable branch, only merge after thorough testing
+develop       ← integration branch, merge features here
+feature/*     ← feature branches (feature/auth-api, feature/sensor-dashboard)
+fix/*         ← bug fix branches (fix/login-bug)
 ```
 
-**Quy ước:**
-1. Không push thẳng vào `main`
-2. Làm việc trên branch riêng (`feature/xxx` hoặc `fix/xxx`)
-3. Tạo Pull Request merge vào `develop`
-4. Khi `develop` ổn định → merge vào `main`
+**Conventions:**
+1. Do not push directly to `main`
+2. Work on separate branches (`feature/xxx` or `fix/xxx`)
+3. Create a Pull Request to merge into `develop`
+4. When `develop` is stable → merge into `main`
 
 ## Database
 
 - **MongoDB** – NoSQL database
-- Sử dụng **Mongoose** làm ODM
-- 3 collection chính:
-  - `users` – Thông tin người dùng
-  - `devices` – Thiết bị IoT
-  - `sensordatas` – Dữ liệu cảm biến theo thời gian
+- Uses **Mongoose** as the ODM
+- 3 main collections:
+  - `users` – User information
+  - `devices` – IoT devices
+  - `sensordatas` – Time-series sensor data
