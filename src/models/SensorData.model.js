@@ -1,20 +1,26 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const sensorDataSchema = new mongoose.Schema(
-    {
-        temperature: {
-            type: Number,
-        },
-        humidity: {
-            type: Number,
-        },
-        user: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
+  {
+    sensorDeviceId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SensorDevice",
+      required: true,
+      index: true,
     },
-    { timestamps: true }
+    value: {
+      type: Number,
+      required: true,
+    },
+    unit: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+  },
+  { timestamps: true }
 );
 
-module.exports = mongoose.model('SensorData', sensorDataSchema);
+sensorDataSchema.index({ sensorDeviceId: 1, timestamp: -1 });
+
+module.exports = mongoose.model("SensorData", sensorDataSchema);
