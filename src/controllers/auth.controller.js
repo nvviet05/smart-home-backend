@@ -1,30 +1,29 @@
-const authService = require('../services/auth.service');
+const asyncHandler        = require('../utils/asyncHandler');
+const { successResponse } = require('../utils/response');
+const authService         = require('../services/auth.service');
 
-const register = async (req, res, next) => {
-    try {
-        const result = await authService.register(req.body);
-        res.status(201).json(result);
-    } catch (err) {
-        next(err);
-    }
-};
+/**
+ * POST /api/auth/register
+ */
+const register = asyncHandler(async (req, res) => {
+  const result = await authService.register(req.body);
+  successResponse(res, result, 'Registration successful', 201);
+});
 
-const login = async (req, res, next) => {
-    try {
-        const result = await authService.login(req.body);
-        res.json(result);
-    } catch (err) {
-        next(err);
-    }
-};
+/**
+ * POST /api/auth/login
+ */
+const login = asyncHandler(async (req, res) => {
+  const result = await authService.login(req.body);
+  successResponse(res, result, 'Login successful');
+});
 
-const getMe = async (req, res, next) => {
-    try {
-        const user = await authService.getMe(req.user._id);
-        res.json(user);
-    } catch (err) {
-        next(err);
-    }
-};
+/**
+ * GET /api/auth/me
+ */
+const getMe = asyncHandler(async (req, res) => {
+  const user = await authService.getMe(req.user._id);
+  successResponse(res, user, 'User profile retrieved');
+});
 
 module.exports = { register, login, getMe };

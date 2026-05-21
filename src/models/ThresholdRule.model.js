@@ -8,6 +8,7 @@ const thresholdRuleSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    // Target device bị điều khiển hoặc theo dõi
     deviceId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Device",
@@ -19,6 +20,16 @@ const thresholdRuleSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    // Loại rule:
+    // ALERT_ONLY    — Chỉ gửi thông báo khi vượt ngưỡng, không điều khiển device
+    // AUTO_CONTROL  — Tự động bật/tắt device + gửi thông báo khi vượt ngưỡng
+    ruleType: {
+      type: String,
+      enum: ["ALERT_ONLY", "AUTO_CONTROL"],
+      default: "AUTO_CONTROL",
+      required: true,
+    },
+    // Loại dữ liệu sensor cần so sánh (VD: "temperature", "humidity")
     dataType: {
       type: String,
       required: true,
@@ -40,11 +51,14 @@ const thresholdRuleSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    // Hành động thực thi (chỉ dùng khi ruleType = AUTO_CONTROL)
+    // VD: "on", "off"
     action: {
       type: String,
-      required: true,
       trim: true,
+      default: "",
     },
+    // Số giây chờ giữa 2 lần trigger liên tiếp (chống spam alert)
     cooldownTime: {
       type: Number,
       default: 0,

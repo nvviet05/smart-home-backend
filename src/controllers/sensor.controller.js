@@ -1,31 +1,36 @@
-const sensorService = require('../services/sensor.service');
+const asyncHandler        = require('../utils/asyncHandler');
+const { successResponse } = require('../utils/response');
+const sensorService       = require('../services/sensor.service');
 
-const getLatest = async (req, res, next) => {
-    try {
-        const data = await sensorService.getLatest(req.user._id);
-        res.json(data);
-    } catch (err) {
-        next(err);
-    }
-};
+// POST /api/sensors/data — ESP32 push
+const ingestData = asyncHandler(async (req, res) => {
+  const data = await sensorService.ingestData(req.body);
+  successResponse(res, data, 'Sensor data recorded', 201);
+});
 
-const getHistory = async (req, res, next) => {
-    try {
-        const { from, to, limit } = req.query;
-        const data = await sensorService.getHistory(req.user._id, { from, to, limit });
-        res.json(data);
-    } catch (err) {
-        next(err);
-    }
-};
+// GET /api/sensors/latest?deviceId=
+const getLatest = asyncHandler(async (req, res) => {
+  const data = await sensorService.getLatestByDevice(req.query.deviceId, req.user._id);
+  successResponse(res, data, 'Latest sensor data retrieved');
+});
 
-const create = async (req, res, next) => {
-    try {
-        const data = await sensorService.create(req.body, req.user._id);
-        res.status(201).json(data);
-    } catch (err) {
-        next(err);
-    }
-};
+// GET /api/sensors/history?sensorDeviceId=&limit=&page=
+const getHistory = asyncHandler(async (req, res) => {
+  const { sensorDeviceId, limit, page } = req.query;
+  const data = await sensorService.getHistory(sensorDeviceId, { limit, page });
+  successResponse(res, data, 'Sensor history retrieved');
+});
 
-module.exports = { getLatest, getHistory, create };
+// GET /api/sensors/devices?deviceId=
+const getSensorDevices = asyncHandler(async (req, res) => {
+  const data = await sensorService.getSensorDevicesByDevice(req.query.deviceId);
+  successResponse(res, data, 'Sensor devices retrieved');
+});
+
+// PATCH /api/sensors/devices/:id/status
+const updateSensorDeviceStatus = asyncHandler(async (req, res) => {
+  const data = await sensorService.updateSensorDeviceStatus(req.params.id, req.body);
+  successResponse(res, data, 'Sensor device status updated');
+});
+
+module.exports = { ingestData, getLatest, getHistory, getSensorDevices, updateSensorDeviceStatus };
